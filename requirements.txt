@@ -2,3 +2,4 @@ Flask
 Flask-SQLAlchemy
 Flask-SocketIO
 gunicorn
+scikit-learn
