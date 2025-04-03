@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome, {{ user }}</h2>
+
+        <h3>Completed Lessons:</h3>
+        <ul id="completed-lessons">
+            {% for lesson in progress %}
+                <li>{{ lesson }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Recommended Lessons:</h3>
+        <ul id="recommendations-list">
+            {% for lesson in recommendations %}
+                <li>{{ lesson }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Mark Lesson as Completed:</h3>
+        <form id="lesson-form">
+            <select id="lesson-select" name="lesson">
+                {% for lesson in recommendations %}
+                    <option value="{{ lesson }}">{{ lesson }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Complete</button>
+        </form>
+
+        <p id="status-message"></p>
+        <a href="/logout"><button>Logout</button></a>
+    </div>
+
+    <h3>Chat with AI Tutor:</h3>
+    <div id="chatbox">
+        <div id="messages"></div>
+        <input type="text" id="chatInput" placeholder="Ask a question..." />
+        <button id="sendBtn">Send</button>
+        <button id="voiceBtn">🎤 Speak</button>
+    </div>
+
+    <!-- Include jQuery & Socket.io -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"></script>
+
+    <!-- Link External JavaScript File -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
