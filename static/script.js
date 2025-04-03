@@ -84,3 +84,7 @@ $(document).ready(function () {
         window.speechSynthesis.speak(speech);
     }
 });
+
+document.getElementById("theme-toggle").addEventListener("click", function() {
+    document.body.classList.toggle("dark-mode");
+});

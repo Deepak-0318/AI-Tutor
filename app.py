@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit
+from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -14,8 +15,9 @@ app.secret_key = os.getenv('SECRET_KEY', 'supersecretkey')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize database and SocketIO
+# Initialize database, migrations, and SocketIO
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 socketio = SocketIO(app)
 
 # OpenAI API Key (Stored in environment variable)
@@ -55,9 +57,9 @@ def recommend_lessons(completed_lessons):
 # User Model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(100), nullable=False)
-    progress = db.Column(db.Text, default='[]')  # Stores completed lessons in JSON format
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    progress = db.Column(db.Text, default='[]')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -164,7 +166,6 @@ def logout():
 
 # AI Chatbot Function
 def get_ai_response(user_input):
-    """ Function to get response from OpenAI API """
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -174,19 +175,16 @@ def get_ai_response(user_input):
             ]
         )
         return response["choices"][0]["message"]["content"]
-    except Exception as e:
+    except Exception:
         return "Error: Could not fetch AI response."
 
-# WebSocket Event Handling
 @socketio.on("message")
 def handle_message(data):
     user_message = data["message"]
     bot_response = get_ai_response(user_message)
     emit("response", {"message": bot_response}, broadcast=True)
 
-# Run the App
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Ensures database tables are created
+        db.create_all()
     socketio.run(app, debug=True)
-

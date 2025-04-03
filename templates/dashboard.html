@@ -4,53 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <h2>Welcome, {{ user }}</h2>
-
-        <h3>Completed Lessons:</h3>
-        <ul id="completed-lessons">
-            {% for lesson in progress %}
-                <li>{{ lesson }}</li>
-            {% endfor %}
-        </ul>
-
-        <h3>Recommended Lessons:</h3>
-        <ul id="recommendations-list">
-            {% for lesson in recommendations %}
-                <li>{{ lesson }}</li>
-            {% endfor %}
-        </ul>
-
-        <h3>Mark Lesson as Completed:</h3>
-        <form id="lesson-form">
-            <select id="lesson-select" name="lesson">
-                {% for lesson in recommendations %}
-                    <option value="{{ lesson }}">{{ lesson }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Complete</button>
-        </form>
-
-        <p id="status-message"></p>
-        <a href="/logout"><button>Logout</button></a>
+        <a class="navbar-brand" href="#">Dashboard</a>
+        <button class="btn btn-outline-light" id="theme-toggle">🌙</button>
+        <a href="/logout" class="btn btn-danger">Logout</a>
     </div>
+</nav>
+
+<div class="container mt-5">
+    <h2>Welcome, {{ user }}</h2>
+
+    <h3>Completed Lessons:</h3>
+    <ul class="list-group">
+        {% for lesson in progress %}
+            <li class="list-group-item">{{ lesson }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Recommended Lessons:</h3>
+    <ul class="list-group">
+        {% for lesson in recommendations %}
+            <li class="list-group-item">{{ lesson }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Mark Lesson as Completed:</h3>
+    <form id="lesson-form">
+        <select id="lesson-select" name="lesson" class="form-select">
+            {% for lesson in recommendations %}
+                <option value="{{ lesson }}">{{ lesson }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary mt-2">Complete</button>
+    </form>
 
     <h3>Chat with AI Tutor:</h3>
-    <div id="chatbox">
+    <div id="chatbox" class="border p-3 rounded">
         <div id="messages"></div>
-        <input type="text" id="chatInput" placeholder="Ask a question..." />
-        <button id="sendBtn">Send</button>
-        <button id="voiceBtn">🎤 Speak</button>
+        <input type="text" id="chatInput" class="form-control" placeholder="Ask a question...">
+        <button id="sendBtn" class="btn btn-success mt-2">Send</button>
     </div>
+</div>
 
-    <!-- Include jQuery & Socket.io -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"></script>
-
-    <!-- Link External JavaScript File -->
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
